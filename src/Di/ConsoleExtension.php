@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Lsr\Console\Di;
 
+use Lsr\Console\Commands\Cache\CacheCleanCommand;
+use Lsr\Console\Commands\ContainerCleanCommand;
 use Nette\DI\CompilerExtension;
 use Nette\DI\ContainerBuilder;
 use Nette\DI\Definitions\ServiceDefinition;
@@ -102,6 +104,22 @@ class ConsoleExtension extends CompilerExtension
         }
 
         $this->compiler->addExportedType($config->autowired);
+
+        $this->defineSystemCommands($builder);
+    }
+
+    private function defineSystemCommands(ContainerBuilder $builder): void
+    {
+        $builder->addDefinition($this->prefix('commands.container_clean'))
+            ->setFactory(ContainerCleanCommand::class)
+            ->setTags(['lsr', 'console', 'command']);
+
+        // If app uses the cache package
+        if (class_exists('Lsr\Caching\Cache')) {
+            $builder->addDefinition($this->prefix('commands.cache_clean'))
+                ->setFactory(CacheCleanCommand::class)
+                ->setTags(['lsr', 'console', 'cache', 'command']);
+        }
     }
 
     public function beforeCompile(): void
