@@ -30,7 +30,7 @@ readonly class CommandLoader implements CommandLoaderInterface
             throw new CommandNotFoundException("Command {$name} not found.");
         }
 
-        $command = $this->container->getByType($type, false);
+        $command = $this->container->getService($type);
         if ($command === null) {
             throw new CommandNotFoundException("Command {$name} not found in container.");
         }
