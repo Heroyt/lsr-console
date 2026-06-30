@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lsr\Console\Di;
 
 use Lsr\Console\Commands\Cache\CacheCleanCommand;
+use Lsr\Console\Commands\Cache\OrmCacheCleanCommand;
 use Lsr\Console\Commands\ContainerCleanCommand;
 use Nette\DI\CompilerExtension;
 use Nette\DI\ContainerBuilder;
@@ -119,6 +120,13 @@ class ConsoleExtension extends CompilerExtension
             $builder->addDefinition($this->prefix('commands.cache_clean'))
                 ->setFactory(CacheCleanCommand::class)
                 ->setTags(['lsr', 'console', 'cache', 'command']);
+        }
+
+        // If app uses the ORM package
+        if (class_exists('Lsr\Orm\ModelRepository')) {
+            $builder->addDefinition($this->prefix('commands.orm_cache_clean'))
+                ->setFactory(OrmCacheCleanCommand::class)
+                ->setTags(['lsr', 'console', 'orm', 'cache', 'command']);
         }
     }
 
